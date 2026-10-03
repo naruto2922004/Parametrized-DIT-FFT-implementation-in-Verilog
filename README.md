@@ -16,14 +16,14 @@ The design is fully parameterized so you can customize bit-widths, maximum trans
 
 | Parameter | Default | Description |
 |---|---|---|
-| `MAX_STAGES` | `10` | Maximum FFT stage depth ($2^{10} = 1024$ points max). |
-| `INPUT_STAGE_WIDTH` | `4` | Bit-width for stage selection register ($\lceil\log_2(\text{MAX\_STAGES})\rceil$). |
+| `MAX_STAGES` | `10` | Maximum FFT stage depth (2^10 = 1024 points max). |
+| `INPUT_STAGE_WIDTH` | `4` | Bit-width for stage selection register: ceil(log2(MAX_STAGES)). |
 | `INPUT_DATA_WIDTH` | `16` | Bit-width of input samples and twiddle factors. |
 | `OUTPUT_DATA_WIDTH` | `32` | Bit-width of intermediate stages and output bins. |
 | `FRAC_BITS` | `15` | Number of fractional bits for twiddle factors (Q15). |
-| `BUTTERFLY_FACTOR` | `6` | Hardware parallelism ($2^{\text{BUTTERFLY\_FACTOR}} = 64$ parallel butterfly units). |
+| `BUTTERFLY_FACTOR` | `6` | Hardware parallelism: 2^BUTTERFLY_FACTOR = 64 parallel butterfly units. |
 
-The active FFT length is also dynamically selectable at runtime via the `input_stage` port ($N = 2^{\text{input\_stage}}$, e.g. 8, 16, 64, 1024 points).
+The active FFT length is also dynamically selectable at runtime via the `input_stage` port (`N = 2^input_stage`, e.g. 8, 16, 64, 1024 points).
 
 ---
 
@@ -91,7 +91,13 @@ Run the verification script to check the simulation output against the analytica
 python script/verify_output.py
 ```
 
-The script computes an exact Radix-2 FFT in Python, calculates the percentage error relative to the absolute golden values, and prints the result:
+The script computes an exact Radix-2 FFT in Python, calculates the percentage error relative to the absolute golden values:
+
+```
+Max % Error = (max |Hardware - Golden| / max |Golden|) * 100%
+```
+
+It prints the error per frame and pass/fail status:
 
 ```
 Verifying 4 frame(s) of 1024-point FFT...
